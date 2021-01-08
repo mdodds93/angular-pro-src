@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Output} from "@angular/core";
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from "@angular/core";
 import {Meal} from "../../../shared/services/meals/meals.service";
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 
@@ -44,11 +44,34 @@ import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angul
           <div>
             <button type="button"
                     class="button"
-                    (click)="createMeal()">
-              Create Meal
+                    (click)="exists ? updateMeal() : createMeal()">
+             {{exists? 'Save' : 'Create Meal' }}
             </button>
             <a class="button button--cancel"
                [routerLink]="['../']">Cancel</a>
+          </div>
+
+          <div class="meal-form__delete" *ngIf="exists">
+            <div *ngIf="deleteMessageVisible">
+              <p>Delete item?</p>
+              <button
+                class="confirm"
+                type="button"
+                (click)="removeItem()">
+                Yes
+              </button>
+              <button
+                class="cancel"
+                type="button"
+                (click)="toggleDeleteMessage()">
+                No
+              </button>
+            </div>
+            <button class="button button--delete"
+                    type="button"
+                    (click)="toggleDeleteMessage()">
+              Delete
+            </button>
           </div>
         </div>
       </form>
@@ -56,9 +79,16 @@ import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angul
     </div>
   `
 })
-export class MealFormComponent {
+export class MealFormComponent implements OnChanges {
+
+  @Input() meal: Meal;
 
   @Output() create: EventEmitter<Meal> = new EventEmitter<Meal>();
+  @Output() update: EventEmitter<Meal> = new EventEmitter<Meal>();
+  @Output() remove: EventEmitter<Meal> = new EventEmitter<Meal>();
+
+  public deleteMessageVisible: boolean = false;
+  public exists: boolean = false;
 
   public form: FormGroup = this.fb.group({
     name: ['', Validators.required],
@@ -79,6 +109,22 @@ export class MealFormComponent {
     )
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.meal && this.meal.name) {
+      // meal exists
+      this.exists = true;
+      this.emptyIngredients();
+      const value = this.meal;
+      this.form.patchValue(value);
+
+      if (value.ingredients) {
+        for (const item of value.ingredients) {
+          this.ingredients.push(new FormControl(item));
+        }
+      }
+    }
+  }
+
   public addIngredient() {
     this.ingredients.push(new FormControl(''))
   }
@@ -88,8 +134,30 @@ export class MealFormComponent {
   }
 
   public createMeal(): void {
-    if (this.form.value) {
+    if (this.form.valid) {
       this.create.emit(this.form.value);
     }
   }
+
+  public updateMeal(): void {
+    if (this.form.valid) {
+      this.update.emit(this.form.value);
+    }
+  }
+
+  public toggleDeleteMessage(): void {
+    this.deleteMessageVisible = !this.deleteMessageVisible;
+  }
+
+  public removeItem(): void {
+    this.remove.emit(this.meal);
+  }
+
+  private emptyIngredients(): void {
+    while (this.ingredients.controls.length) {
+      this.ingredients.removeAt(0);
+    }
+  }
+
+
 }

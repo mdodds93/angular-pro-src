@@ -50,7 +50,7 @@ export class ListItemComponent {
   }
 
   public getRoute(item: ListItemType): string[] {
-    return [`..meals`, item.$key];
+    return [`../meals`, item.$key];
   }
 
   public removeItem(): void {
