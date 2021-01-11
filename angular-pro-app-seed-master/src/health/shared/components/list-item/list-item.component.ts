@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
 import {Meal} from "../../services/meals/meals.service";
+import {Workout} from "../../services/workouts/workouts.service";
 
 @Component({
   selector: 'list-item',
@@ -62,4 +63,4 @@ export class ListItemComponent {
   }
 }
 
-type ListItemType = Meal;
+type ListItemType = Meal | Workout;
