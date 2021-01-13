@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from "@angular/core";
 import {Workout} from "../../../shared/services/workouts/workouts.service";
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'workout-form',
@@ -21,13 +21,18 @@ import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angul
               Workout name is required
             </div>
           </label>
+          <label>
+            <h3>Type</h3>
+            <workout-type formControlName="type">
+            </workout-type>
+          </label>
         </div>
         <div class="workout-form__submit">
           <div>
             <button type="button"
                     class="button"
                     (click)="exists ? updateWorkout() : createWorkout()">
-             {{exists? 'Save' : 'Create Workout' }}
+              {{exists ? 'Save' : 'Create Workout' }}
             </button>
             <a class="button button--cancel"
                [routerLink]="['../']">Cancel</a>
@@ -73,7 +78,8 @@ export class WorkoutFormComponent implements OnChanges {
   public exists: boolean = false;
 
   public form: FormGroup = this.fb.group({
-    name: ['', Validators.required]
+    name: ['', Validators.required],
+    type: 'strength'
   });
 
   constructor(private fb: FormBuilder) {
