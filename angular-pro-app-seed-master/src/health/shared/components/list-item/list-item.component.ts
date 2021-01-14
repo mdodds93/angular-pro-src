@@ -12,10 +12,13 @@ import {Workout} from "../../services/workouts/workouts.service";
 
         <p class="list-item__name">{{item.name}}</p>
         <p class="list-item__ingredients">
-          <span>
-            {{item.ingredients}}
+          <span *ngIf="item.ingredients; else showWorkout">
+            {{ item.ingredients | join }}
           </span>
         </p>
+        <ng-template #showWorkout>
+          <span> {{ item  | workout}}</span>
+        </ng-template>
       </a>
 
       <div *ngIf="deleteMessageVisible"
@@ -51,7 +54,10 @@ export class ListItemComponent {
   }
 
   public getRoute(item: ListItemType): string[] {
-    return [`../meals`, item.$key];
+    return [
+      `../${item.hasOwnProperty('ingredients') ? 'meals' : 'workouts'}`,
+      item.$key
+    ];
   }
 
   public removeItem(): void {

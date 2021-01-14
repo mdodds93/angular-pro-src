@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import {Observable, Subscription} from "rxjs";
 import {Workout, WorkoutsService} from "../../../shared/services/workouts/workouts.service";
 import {Store} from "store";
@@ -39,7 +39,7 @@ import {Store} from "store";
     </div>
   `
 })
-export class WorkoutsComponent {
+export class WorkoutsComponent implements OnInit, OnDestroy {
 
   workouts$: Observable<Workout[]>;
   subscription: Subscription;
