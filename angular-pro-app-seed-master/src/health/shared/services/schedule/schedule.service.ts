@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {BehaviorSubject, Observable} from "rxjs";
+import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {Store} from "store";
 import {Meal} from "../meals/meals.service";
 import {Workout} from "../workouts/workouts.service";
@@ -30,8 +30,7 @@ export interface ScheduleList {
 export class ScheduleService {
 
   private date$: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
-
-  schedule$: Observable<ScheduleList> = this.date$
+  public schedule$: Observable<ScheduleList> = this.date$
     .do((next: any) => this.store.set('date', next))
     .map((day: any) => {
       const startAt = new Date(day.getFullYear(), day.getMonth(), day.getDate()).getTime();
@@ -49,6 +48,9 @@ export class ScheduleService {
       return mapped;
     })
     .do((next: ScheduleList) => this.store.set('schedule', next));
+  private section$: Subject<any> = new Subject<any>();
+  public selected$ = this.section$
+    .do((next: any) => this.store.set('selected', next));
 
   constructor(private store: Store,
               private db: AngularFireDatabase,
@@ -61,6 +63,10 @@ export class ScheduleService {
 
   updateDate(date: Date) {
     this.date$.next(date);
+  }
+
+  selectSection(event: any) {
+    this.section$.next(event);
   }
 
   private getSchedule(startAt: number, endAt: number) {

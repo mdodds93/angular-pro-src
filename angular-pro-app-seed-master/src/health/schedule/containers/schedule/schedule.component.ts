@@ -10,7 +10,8 @@ import {Store} from "store";
     <div class="schedule">
       <schedule-calendar [date]="date$ | async"
                          [items]="schedule$ | async"
-                         (change)="changeDate($event)"></schedule-calendar>
+                         (change)="changeDate($event)"
+                         (select)="changeSection($event)"></schedule-calendar>
     </div>
   `
 })
@@ -29,7 +30,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
     this.schedule$ = this.store.select('schedules');
     this.subscriptions = [
       this.scheduleService.schedule$.subscribe(),
-
+      this.scheduleService.selected$.subscribe(),
     ];
   }
 
@@ -38,7 +39,11 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   }
 
   changeDate(date: Date) {
-this.scheduleService.updateDate(date);
+    this.scheduleService.updateDate(date);
+  }
+
+  changeSection(event: any) {
+    this.scheduleService.selectSection(event);
   }
 
 }
