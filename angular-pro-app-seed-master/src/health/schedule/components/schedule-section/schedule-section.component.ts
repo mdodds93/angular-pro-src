@@ -46,11 +46,11 @@ export class ScheduleSectionComponent {
   constructor() {
   }
 
-  onSelect(type: string, assignedItems: string[] = []) {
+  onSelect(type: string, assigned: string[] = []) {
     const data = this.section;
     this.select.emit({
       type,
-      assignedItems,
+      assigned,
       data
     });
   }
