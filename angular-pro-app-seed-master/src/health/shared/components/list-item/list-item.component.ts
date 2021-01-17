@@ -12,8 +12,8 @@ import {Workout} from "../../services/workouts/workouts.service";
 
         <p class="list-item__name">{{item.name}}</p>
         <p class="list-item__ingredients">
-          <span *ngIf="item.ingredients; else showWorkout">
-            {{ item.ingredients | join }}
+          <span *ngIf="item.hasOwnProperty('ingredients'); else showWorkout">
+            {{ item['ingredients'] | join }}
           </span>
         </p>
         <ng-template #showWorkout>
